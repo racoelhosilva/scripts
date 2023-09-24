@@ -14,7 +14,7 @@ Custom script to quickly change the alacritty theme.
 Theme changes instantly. Themes should be placed inside "THEME_DIR".
 Alacritty config file should import that same theme file.
 
-Commands:
+*Commands:*
 - alacritty-themer ls :: Lists possible theme options
 - alacritty-themer <theme> :: Changes the current theme
 
