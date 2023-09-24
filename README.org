@@ -1,11 +1,12 @@
 #+TITLE: Custom Shell Commands
 #+AUTHOR: racoelhosilva
+#+DESCRIPTION: Collection of custom made shell scripts for various linux operations
 #+STARTUP: showeverything
 
 ** Table Of Contents :toc:
-  - [[#alacritty-theme-changer][Alacritty Theme Changer]]
+- [[#alacritty-theme-changer][Alacritty Theme Changer]]
 
-** Alacritty Theme Changer
+* Alacritty Theme Changer
 
 Custom script to quickly change the alacritty theme.
 Theme changes instantly. Themes should be placed inside "THEME_DIR".
