@@ -1,0 +1,20 @@
+#!/bin/bash
+# Specify the alacritty config and theme directory
+ALACRITTY_DIR="$HOME/.config/alacritty"
+THEME_DIR="$HOME/.config/alacritty/themes"
+
+# List theme options
+if [ "$#" = 0 ] || [ "$1" = "ls" ]; then
+	echo "The current options are:"
+	ls "$THEME_DIR" | sed 's/\([a-z_0-9]*\).yaml/ - \1/g'
+	exit 0
+fi
+
+# Try to update the current theme
+if ls $THEME_DIR | grep -w "$1.yaml" >/dev/null; then
+	sed -i 's|\('"$THEME_DIR"'/\)[a-z_0-9]*\(.yaml\)|\1'"$1"'\2|' "$ALACRITTY_DIR"/alacritty.yml
+    exit 0
+else
+	echo "Couldn't change the theme. Please check spelling."
+	exit 1
+fi
