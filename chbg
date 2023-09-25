@@ -1,0 +1,23 @@
+#!/bin/sh
+# Specify wallpaper directory and wallpaper sourced by applications
+WALLPAPER_DIR="$HOME/.config/wallpaper/collection"
+WALLPAPER_SRC="$HOME/.config/wallpaper/wallpaper.png"
+
+# List theme options
+if [ "$#" = 0 ] || [ "$1" = "ls" ]; then
+	echo "The wallpaper options are:"
+	ls "$WALLPAPER_DIR" | sed 's/\([a-z_0-9]*\).png/ - \1/g'
+	exit 0
+else
+	cp "$WALLPAPER_DIR"/"$1".png "$WALLPAPER_SRC" 2>/dev/null
+fi
+
+# Try to update the current wallpaper
+if ls $THEME_DIR | grep -w "$1.png" >/dev/null; then
+	cp "$WALLPAPER_DIR"/"$1".png "$WALLPAPER_SRC" 2>/dev/null
+    feh --bg-fill $WALLPAPER_SRC
+    exit 0
+else
+	echo "Couldn't change the wallpaper. Please check spelling."
+	exit 1
+fi

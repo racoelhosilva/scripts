@@ -7,6 +7,7 @@ Collection of custom made shell scripts for various linux operations
 
 *** Table Of Contents :toc:
 - [[#alacritty-theme-changer][Alacritty Theme Changer]]
+- [[#background-changer][Background Changer]]
 
 * Alacritty Theme Changer
 
@@ -37,6 +38,44 @@ if ls $THEME_DIR | grep -w "$1.yaml" >/dev/null; then
     exit 0
 else
 	echo "Couldn't change the theme. Please check spelling."
+	exit 1
+fi
+
+#+END_SRC
+
+* Background Changer
+
+Custom script to quickly change the background image.
+This script assumes there is a single file in "WALLPAPER_SRC" which is the background sourced when booting the pc.
+What it does is replacing that file with copy of an image chosen from the "WALLPAPER_DIR".
+
+*Commands:*
+- alacritty-themer ls :: Lists possible wallpaper options
+- alacritty-themer <image> :: Changes the wallpaper file and reloads it using 'feh'
+
+
+#+BEGIN_SRC sh :tangle chbg :shebang "#!/bin/sh"
+
+# Specify wallpaper directory and wallpaper sourced by applications
+WALLPAPER_DIR="$HOME/.config/wallpaper/collection"
+WALLPAPER_SRC="$HOME/.config/wallpaper/wallpaper.png"
+
+# List theme options
+if [ "$#" = 0 ] || [ "$1" = "ls" ]; then
+	echo "The wallpaper options are:"
+	ls "$WALLPAPER_DIR" | sed 's/\([a-z_0-9]*\).png/ - \1/g'
+	exit 0
+else
+	cp "$WALLPAPER_DIR"/"$1".png "$WALLPAPER_SRC" 2>/dev/null
+fi
+
+# Try to update the current wallpaper
+if ls $THEME_DIR | grep -w "$1.png" >/dev/null; then
+	cp "$WALLPAPER_DIR"/"$1".png "$WALLPAPER_SRC" 2>/dev/null
+    feh --bg-fill $WALLPAPER_SRC
+    exit 0
+else
+	echo "Couldn't change the wallpaper. Please check spelling."
 	exit 1
 fi
 
