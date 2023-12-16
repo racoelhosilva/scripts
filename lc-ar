@@ -37,6 +37,6 @@ sed -ri 's/(\| )(Total[[:space:]]\|[[:space:]])([0-9]+)( \|)/echo "\1\2$((\3+1))
 
 
 git add "$TOPIC"/"$DIFFICULTY"/"$1" README.md
-git commit -m "Solved problem $NUMBER: $NAME"
+git commit -a -m "Solved problem $NUMBER: $NAME"
 
 exit 0
