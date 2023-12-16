@@ -1,0 +1,93 @@
+#!/bin/bash
+if [ $# -gt 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "$0 initializes the directory structure for LeetCode problem solving"
+    echo "$0 also creates a README file to track the progress of solved problems"
+    exit 1
+fi
+
+TOPICS=(
+    "Arrays & Hashing"
+    "Backtracking"
+    "Binary Search"
+    "Binary Trees"
+    "Bit Manipulation"
+    "Dynamic Programming (1D)"
+    "Dynamic Programming (2D)"
+    "Graphs"
+    "Graphs (Advanced)"
+    "Greedy"
+    "Intervals"
+    "Linked Lists"
+    "Math & Geometry"
+    "Priority Queue"
+    "Sliding Window"
+    "Stack"
+    "Tries"
+    "Two Pointers"
+)
+DIFFICULTIES=(
+    "Easy"
+    "Medium"
+    "Hard"
+)
+
+for TOPIC in "${TOPICS[@]}"; do
+    for DIFFICULTY in "${DIFFICULTIES[@]}"; do
+        mkdir -p "$(pwd)"/"$TOPIC"/"$DIFFICULTY"
+    done
+done
+
+
+cat > README.md << EOF
+# LeetCode Solutions/Analysis
+
+> Collection of my solutions to [LeetCode](https://leetcode.com) problems
+
+## Table of Contents
+  - [Progress Tracking](#progress-tracking)
+  - [Milestones](#milestones)
+  - [Useful Links](#useful-links)
+
+## Progress Tracking
+
+### Problems Solved
+
+| Total | 0 |
+|:---:|:---:|
+
+#### Search By Topic
+
+| Topic | Number |
+|:---|---:|
+EOF
+
+for TOPIC in "${TOPICS[@]}"; do
+    echo "| $TOPIC | 0 |" >> README.md
+done
+
+cat >> README.md << EOF
+
+#### Search By Difficulty
+
+| Difficulty | Number |
+|:---|---:|
+EOF
+
+for DIFFICULTY in "${DIFFICULTIES[@]}"; do
+    echo "| $DIFFICULTY | 0 |" >> README.md
+done
+
+cat >> README.md << EOF
+
+
+
+## Milestones
+
+| Date | Description |
+|------|-------------|
+|      |             |
+
+## Useful Links
+EOF
+
+exit 0

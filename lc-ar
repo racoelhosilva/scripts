@@ -1,0 +1,42 @@
+#!/bin/bash
+if [ $# -gt 2 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "$0 archives a solve in the correct directory based on the Difficulty and Topic comments"
+    echo "$0 updates the README file, incrementing the corresponding values for the solved problems"
+    echo "$0 creates a commit with the file in the right position and a simple commit message"
+    exit 1
+fi
+
+NUMBER=$(head -n 2 <"$1" | tail -n 1 | cut -b 13-255)
+NAME=$(head -n 3 <"$1" | tail -n 1 | cut -b 10-255)
+DIFFICULTY=$(head -n 4 <"$1" | tail -n 1 | cut -b 16-255)
+TOPIC=$(head -n 5 <"$1" | tail -n 1 | cut -b 11-255)
+
+case "$DIFFICULTY" in
+"Easy" | "Medium" | "Hard") ;;
+*)
+    echo "ERROR! Incorrect Difficulty value!"
+    exit 1
+    ;;
+esac
+
+case "$TOPIC" in
+"Arrays & Hashing" | "Backtracking" | "Binary Search" | "Binary Trees" | "Bit Manipulation" | "Dynamic Programming (1D)" | "Dynamic Programming (2D)" | "Graphs" | "Graphs (Advanced)" | "Greedy" | "Intervals" | "Linked Lists" | "Math & Geometry" | "Priority Queue" | "Sliding Window" | "Stack" | "Tries" | "Two Pointers") ;;
+*)
+    echo "ERROR! Incorrect Topic Name!"
+    exit 1;
+    ;;
+esac
+
+mv "$1" "$TOPIC"/"$DIFFICULTY"
+
+sed -ri 's/(\| )('"$TOPIC"'[[:space:]]\|[[:space:]])([0-9]+)( \|)/echo "\1\2$((\3+1))\4"/ge' README.md
+
+sed -ri 's/(\| )('"$DIFFICULTY"'[[:space:]]\|[[:space:]])([0-9]+)( \|)/echo "\1\2$((\3+1))\4"/ge' README.md
+
+sed -ri 's/(\| )(Total[[:space:]]\|[[:space:]])([0-9]+)( \|)/echo "\1\2$((\3+1))\4"/ge' README.md
+
+
+git add "$TOPIC"/"$DIFFICULTY"/"$1"
+git commit -m "Solved problem $NUMBER: $NAME"
+
+exit 0

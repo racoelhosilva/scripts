@@ -1,0 +1,23 @@
+#!/bin/bash
+if [ $# -lt 2 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "$0 creates a new file to solve a specific problem"
+    echo "$0 takes at least two parameters (number and name)"
+    echo "Usage: $0 <problem_number> <problem_name> <difficulty> <topic>"
+    exit 1
+fi
+
+NAME=${2// /}
+cat > "$1"_"$NAME".cpp <<-EOF
+/* 
+ * Problem: $1 
+ * Name: $2
+ * Difficulty: $3
+ * Topic: 
+ * Link: https://leetcode.com/problems/
+ */
+ 
+#include <bits/stdc++.h>
+using namespace std;
+EOF
+
+exit 0
