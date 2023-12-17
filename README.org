@@ -104,10 +104,10 @@ TOPICS=(
     "Binary Search"
     "Binary Trees"
     "Bit Manipulation"
-    "Dynamic Programming (1D)"
-    "Dynamic Programming (2D)"
+    "Dynamic Programming 1D"
+    "Dynamic Programming 2D"
     "Graphs"
-    "Graphs (Advanced)"
+    "Graphs Advanced"
     "Greedy"
     "Intervals"
     "Linked Lists"
@@ -242,7 +242,7 @@ case "$DIFFICULTY" in
 esac
 
 case "$TOPIC" in
-"Arrays & Hashing" | "Backtracking" | "Binary Search" | "Binary Trees" | "Bit Manipulation" | "Dynamic Programming (1D)" | "Dynamic Programming (2D)" | "Graphs" | "Graphs (Advanced)" | "Greedy" | "Intervals" | "Linked Lists" | "Math & Geometry" | "Priority Queue" | "Sliding Window" | "Stack" | "Tries" | "Two Pointers") ;;
+"Arrays & Hashing" | "Backtracking" | "Binary Search" | "Binary Trees" | "Bit Manipulation" | "Dynamic Programming 1D" | "Dynamic Programming 2D" | "Graphs" | "Graphs Advanced" | "Greedy" | "Intervals" | "Linked Lists" | "Math & Geometry" | "Priority Queue" | "Sliding Window" | "Stack" | "Tries" | "Two Pointers") ;;
 *)
     echo "ERROR! Incorrect Topic Name!"
     exit 1;
