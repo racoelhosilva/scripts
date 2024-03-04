@@ -1,0 +1,44 @@
+#!/usr/bin/python3
+import sys, os, subprocess
+
+def adventOfCode(year, day):
+    
+    currentDir = os.getcwd()
+    commands = []
+    # Check if year directory exists
+    yearDir = os.path.join(currentDir, year)
+    if not os.path.exists(yearDir):
+        print("Error: Year Directory not found!")
+        exit(1)
+    
+    # Check if day directory exists
+    dayDir = os.path.join(yearDir, f"day{int(day):02d}")
+    if not os.path.exists(dayDir):
+        print("Error: Day Directory not found!")
+        exit(1)
+               
+    # Check if solution file exists
+    solutionPath = os.path.join(dayDir, "main.py")
+    if not os.path.exists(solutionPath):
+        print("Error: Solution File not found!")
+        exit(1)
+    
+    commands.append(f"git add {solutionPath}")
+    
+    # Add input file if exists
+    inputPath = os.path.join(dayDir, "input.txt")
+    if os.path.exists(inputPath):
+        commands.append(f"git add {inputPath}")
+    
+    # Get problem title from file
+    with open(solutionPath, "r") as solutionFile:
+        title = solutionFile.read().splitlines()[1].split(":")[1][1:]
+    
+    commands.append(f"git commit -m \"{year} Day {int(day):02d}: {title}\"")
+    
+    for command in commands:
+        subprocess.run(command, shell=True, check=True)
+
+if __name__ == "__main__":
+    if (len(sys.argv) == 3):
+        adventOfCode(sys.argv[1], sys.argv[2])

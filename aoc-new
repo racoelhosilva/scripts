@@ -1,0 +1,83 @@
+#!/usr/bin/python3
+import sys, os, requests, html, re
+
+def getPuzzleInput(year, day):
+    
+    session_token = os.environ.get("AOC_COOKIE")
+    headers = {'Cookie': f'session={session_token}'}
+    request = requests.get(f'https://adventofcode.com/{year}/day/{day}/input', headers=headers)
+    
+    if request.status_code == 200:
+        with open(os.path.join(os.getcwd(), year, f"day{int(day):02d}", "input.txt"), "w") as inputText:
+            inputText.write(request.text.strip())
+    elif request.status_code == 404:
+        print(f"Error: Puzzle for day not found.")
+    elif request.status_code == 403:
+        print("Error: Authentication failed. Make sure to provide a valid session token.")
+    else:
+        print(f"Error: Failed to fetch puzzle input. Status code: {request.status_code}")
+
+def getPuzzleName(year, day):
+    request = requests.get(f'https://adventofcode.com/{year}/day/{day}')
+    
+    if request.status_code == 404:
+        print(f"Error: Puzzle for day not found.")
+        return
+    
+    request.encoding = 'utf-8'
+    html_doc = html.unescape(request.text)
+    title = re.findall(r"--- (.*?) ---", html_doc, re.DOTALL)[0].split(":")[1][1:]
+    return f"Day {int(day):02d}: {title}"
+
+def adventOfCode(year, day):
+    
+    currentDir = os.getcwd()
+    
+    # Check if year directory exists and set it up
+    yearDir = os.path.join(currentDir, year)
+    if not os.path.exists(yearDir):
+        os.mkdir(yearDir)
+    
+    # Check if day directory exists and set it up
+    dayDir = os.path.join(yearDir, f"day{int(day):02d}")
+    if not os.path.exists(dayDir):
+        os.mkdir(dayDir)
+               
+    # Get puzzle name
+    puzzleName = getPuzzleName(year, day)
+    
+    # Create solution file (by default in python)
+    solutionPath = os.path.join(dayDir, "main.py")
+    if not os.path.exists(solutionPath):
+        with open(solutionPath, "w") as solutionFile:
+            solutionFile.write(
+                f"""# Advent of Code {year}
+# {puzzleName}
+# https://adventofcode.com/{year}/day/{day}
+    
+def a(data):
+    return
+                
+def b(data):    
+    return
+
+def test():
+    print()
+    print("Test 1:", "Passed" if a([]) == None else "Failed")
+    print("Test 2:", "Passed" if b([]) == None else "Failed")
+    print()
+
+if __name__ == \"__main__\":
+    print(\"\\tAdvent of Code {year}\\n{puzzleName}\")
+    data = open(\"{os.path.join(dayDir, 'input.txt')}\", \"r\").read().splitlines()
+    test()
+    print(\"Part a:\", a(data))
+    print(\"Part b:\", b(data))""")
+            
+    # Create input file
+    getPuzzleInput(year, day)
+
+
+if __name__ == "__main__":
+    if (len(sys.argv) == 3):
+        adventOfCode(sys.argv[1], sys.argv[2])
