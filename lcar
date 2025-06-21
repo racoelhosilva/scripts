@@ -1,0 +1,153 @@
+#! /usr/bin/env python3
+
+import os
+import shutil
+import subprocess
+
+ALLOWED_TOPICS = [
+    "Arrays & Hashing",
+    "Backtracking",
+    "Binary Search",
+    "Binary Trees",
+    "Bit Manipulation",
+    "Dynamic Programming 1D",
+    "Dynamic Programming 2D",
+    "Graphs",
+    "Graphs Advanced",
+    "Greedy",
+    "Heap Priority Queue",
+    "Intervals",
+    "Linked Lists",
+    "Math & Geometry",
+    "Prefix Sum",
+    "Queue",
+    "Sliding Window",
+    "Stack",
+    "Tries",
+    "Two Pointers"
+]
+
+tracker_file = "README.md"
+
+def read_parameters(filename: str) -> tuple[str, str, str, str]:
+    """Extract topic and difficulty parameters from file."""
+    title, number, difficulty, topic = None, None, None, None
+    with open(filename, "r", encoding="utf-8") as file:
+        lines = file.readlines()
+        for line in lines:
+            if line.lower().startswith("difficulty:"):
+                difficulty = line.split(":", 1)[1].strip()
+            if line.lower().startswith("topic:"):
+                topic = line.split(":", 1)[1].strip()
+            if line.lower().startswith("problem number:"):
+                number = line.split(":", 1)[1].strip()
+            if line.lower().startswith("leetcode problem:"):
+                title = line.split(":", 1)[1].strip()
+    return title, number, difficulty, topic
+
+def get_topic_input() -> str:
+    """Select topic from user input prompt."""
+    while True:
+        topic_index = int(input(f"\t{'\n\t'.join(f"{idx+1}. {name}" for idx, name in enumerate(ALLOWED_TOPICS))}\nChoose the topic: ")) - 1
+        if topic_index >= 0 and topic_index < len(ALLOWED_TOPICS):
+            return ALLOWED_TOPICS[topic_index]
+        else:
+            print("Invalid topic.")
+
+def add_topic_to_file(filename: str, topic: str) -> None:
+    """Save new topic to file in existing location."""
+    with open(filename, "r+", encoding="utf-8") as file:
+        lines = file.readlines()
+        for i, line in enumerate(lines):
+            if line.lower().startswith("topic:"):
+                lines[i] = f"Topic: {topic}\n"
+                break
+        file.seek(0)
+        file.writelines(lines)
+
+def increase_value(s: str) -> str:
+    """Increase value of one field in the markdown table."""
+    return str(int(s.strip())+1)
+
+def update_tracker(topic: str, difficulty: str) -> None:
+    """Update markdown table tracker."""
+    with open(tracker_file, "r+", encoding="utf-8") as file:
+        lines = file.readlines()
+        topic_line = f"| {topic} |"
+        total_line = "| **Totals** |"
+
+        for i, line in enumerate(lines):
+            if line.startswith(topic_line) or line.startswith(total_line):
+                fields = line[1:-2].split("|")
+                
+                if difficulty == 'Easy': fields[1] = increase_value(fields[1])
+                elif difficulty == 'Medium': fields[2] = increase_value(fields[2])
+                elif difficulty == 'Hard': fields[3] = increase_value(fields[3])
+                fields[4] = increase_value(fields[4])
+                
+                lines[i] = f"| {' | '.join(field.strip() for field in fields)} |\n"
+        
+        file.seek(0)
+        file.writelines(lines)
+
+def is_inside_repo() -> None:
+    """Checks if is running the command inside a repository."""
+    result = subprocess.run(['git', 'rev-parse', '--is-inside-work-tree'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return result.returncode == 0
+
+def stage_changes(filepath: str, has_tracker: bool, number: str, title: str) -> None:
+    """Commits the changes with a default message."""
+    try:
+        command = ['git', 'add', filepath]
+        if has_tracker:
+            command.append(tracker_file)
+
+        subprocess.run(command, check=True)
+        
+        commit_message = f'Leetcode problem {number}: {title}'
+        subprocess.run(['git', 'commit', '-m', commit_message], check=True)
+        
+    except subprocess.CalledProcessError as e:
+        print(f"Git command failed: {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+
+def archive_leetcode_file(filename: str) -> None:
+    """Archive a leetcode file based on topic and difficulty."""
+    if not os.path.isfile(filename):
+        print(f"Error: file '{filename}' does not exist.")
+        exit(1)
+
+    title, number, difficulty, topic = read_parameters(filename)
+
+    if not topic or not topic in ALLOWED_TOPICS:
+        topic = get_topic_input()
+        add_topic_to_file(filename, topic)
+
+    folder = os.path.join(topic, difficulty)
+    os.makedirs(folder, exist_ok=True)
+    destination = os.path.join(folder, filename)
+    shutil.move(filename, destination)
+
+    print(f"> File '{filename}' archived in '{destination}'!")
+
+    has_tracker_file = os.path.isfile(tracker_file) 
+    if not has_tracker_file:
+        return
+
+    update_tracker(topic, difficulty)
+    print(f"> '{topic}' and '{difficulty}' updated in '{tracker_file}'!")
+
+    if not is_inside_repo():
+        return
+
+    stage_changes(destination, has_tracker_file, number, title)
+    print(f"> Changes were stages successfully!")
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) != 2:
+        print("Usage: lcar <file_path>")
+    else:
+        filename = sys.argv[1]
+        archive_leetcode_file(filename)

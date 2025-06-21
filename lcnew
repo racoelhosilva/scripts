@@ -1,0 +1,55 @@
+#! /usr/bin/env python3
+
+import re
+
+TEMPLATE = """\"\"\"
+LeetCode Problem: {title}
+Problem Number: {number}
+Difficulty: {difficulty}
+Topic:
+Link: {link}
+\"\"\"
+
+class Solution:
+    pass
+"""
+
+VALID_DIFFICULTIES = ["Easy", "Medium", "Hard"]
+
+def get_user_input() -> tuple[str, str, str]:
+    """Prompts user for problem input."""
+    title: str = input("Enter Problem Title: ").strip()
+    number: str = input("Enter Problem Number: ").strip()
+    difficulty: str = None
+    while difficulty not in VALID_DIFFICULTIES:
+        difficulty = input("Enter Problem Difficulty: ").strip()
+    return title, number, difficulty
+
+def to_pascal_case(text: str) -> str:
+    """Convert a string to PascalCase."""
+    return "".join(word.capitalize() for word in text.split())
+
+def to_kebab_case(text: str) -> str:
+    """Convert a string to kebab-case."""
+    text = re.compile(r'[^a-z0-9 ]').sub('', text.lower())
+    return "-".join(word for word in text.split())
+
+def create_leetcode_file() -> None:
+    """Create blank Leetcode file"""
+    title, number, difficulty = get_user_input()
+    
+    padded_number = number.zfill(4)
+    pascal_title = to_pascal_case(title)
+    filename = f"{padded_number}-{pascal_title}.py"
+
+    kebab_title = to_kebab_case(title)
+    link = f"https://leetcode.com/problems/{kebab_title}/"
+    template = TEMPLATE.format(title=title, number=number, difficulty=difficulty, link=link)
+
+    with open(filename, "w", encoding="utf-8") as file:
+        file.write(template)
+
+    print(f"> File '{filename}' created successfully!")
+
+if __name__ == "__main__":
+    create_leetcode_file()
